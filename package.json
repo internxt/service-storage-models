@@ -46,8 +46,8 @@
     "ms": "^0.7.1",
     "proxyquire": "^1.8.0",
     "random-word": "^2.0.0",
-    "storj-lib": "^8.0.0",
-    "storj-service-error-types": "^1.1.0",
+    "storj-lib": "internxt/core",
+    "storj-service-error-types": "internxt/service-error-types",
     "stripe": "^4.11.0",
     "uuid": "^3.0.1",
     "uuid-validate": "^0.0.2"
