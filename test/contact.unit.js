@@ -326,21 +326,21 @@ describe('Storage/models/Contact', function() {
       const contact = new Contact({});
       expect(function() {
         contact.recordResponseTime(NaN);
-      }).to.throw('Assertion');
+      }).to.throw('responseTime is expected to be a finite number');
     });
 
     it('will throw if number is not finite (Infinity)', function() {
       const contact = new Contact({});
       expect(function() {
         contact.recordResponseTime(Infinity);
-      }).to.throw('Assertion');
+      }).to.throw('responseTime is expected to be a finite number');
     });
 
     it('will throw if number is not finite (string)', function() {
       const contact = new Contact({});
       expect(function() {
         contact.recordResponseTime('2000');
-      }).to.throw('Assertion');
+      }).to.throw('responseTime is expected to be a finite number');
     });
 
     it('will start using 10s with 1000 reqs as period', function() {

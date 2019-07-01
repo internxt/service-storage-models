@@ -77,7 +77,7 @@ describe('Storage/models/PublicKey', function() {
       _id: 'user@domain.tld'
     }, 'testkey', function(err) {
       expect(err.message).to.equal(
-        'Invalid public key supplied: Invalid hex string'
+        'Invalid public key supplied: Invalid public key supplied'
       );
       done();
     });
