@@ -4,7 +4,7 @@
 
 const expect = require('chai').expect;
 const mongoose = require('mongoose');
-mongoose.plugin(schema => { schema.options.usePushEach = true });
+mongoose.plugin(schema => { schema.options.usePushEach = true; });
 const _ = require('lodash');
 
 require('mongoose-types').loadTypes(mongoose);
