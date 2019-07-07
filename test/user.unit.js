@@ -286,11 +286,11 @@ describe('Storage/models/User', function() {
             expect(user2.bytesDownloaded.lastMonthBytes).to.equal(4096 * 10);
 
             expect(user2.bytesDownloaded.lastHourStarted)
-              .to.be.below(Date.now());
+              .to.be.below(new Date(Date.now()));
             expect(user2.bytesDownloaded.lastDayStarted)
-              .to.be.below(Date.now());
+              .to.be.below(new Date(Date.now()));
             expect(user2.bytesDownloaded.lastMonthStarted)
-              .to.be.below(Date.now());
+              .to.be.below(new Date(Date.now()));
             done();
           });
         });
@@ -419,11 +419,11 @@ describe('Storage/models/User', function() {
             expect(user2.bytesUploaded.lastMonthBytes).to.equal(4096 * 10);
 
             expect(user2.bytesUploaded.lastHourStarted)
-              .to.be.below(Date.now());
+              .to.be.below(new Date(Date.now()));
             expect(user2.bytesUploaded.lastDayStarted)
-              .to.be.below(Date.now());
+              .to.be.below(new Date(Date.now()));
             expect(user2.bytesUploaded.lastMonthStarted)
-              .to.be.below(Date.now());
+              .to.be.below(new Date(Date.now()));
             done();
           });
         });

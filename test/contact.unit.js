@@ -196,9 +196,8 @@ describe('Storage/models/Contact', function() {
     it('will set last timeout', function() {
       const contact = new Contact({});
       contact.recordTimeoutFailure();
-
-      expect(contact.lastTimeout).to.be.above(Date.now() - 5000);
-      expect(contact.lastTimeout).to.be.below(Date.now() + 5000);
+      expect(contact.lastTimeout).to.be.above(new Date(Date.now() - 5000));
+      expect(contact.lastTimeout).to.be.below(new Date(Date.now() + 5000));
 
     });
 

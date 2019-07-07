@@ -298,8 +298,8 @@ describe('Storage/models/Credit', function() {
         }
         // NB: credit.paid_amount and credit_.invoiced_amount are NaN because
         // their type is Number
-        expect(credit.paid_amount).to.be.NaN;
-        expect(credit.invoiced_amount).to.be.NaN;
+        expect(credit.paid_amount).to.be.undefined;
+        expect(credit.invoiced_amount).to.be.undefined;
         expect(credit.paid).to.be.false;
         expect(credit.promo_amount).to.equal(PROMO_AMOUNT.NEW_SIGNUP);
         expect(credit.promo_code).to.equal(PROMO_CODE.NEW_SIGNUP);
@@ -320,8 +320,8 @@ describe('Storage/models/Credit', function() {
         if (err) {
           return done(err);
         }
-        expect(credit.promo_amount).to.be.NaN;
-        expect(credit.promo_code).to.be.NaN;
+        expect(credit.promo_amount).to.be.undefined;
+        expect(credit.promo_code).to.be.undefined;
         expect(credit.promo_expires).to.be.undefined;
         done();
       });
