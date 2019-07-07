@@ -17,7 +17,7 @@ var Storage = proxyquire('../index.js', {
 describe('Storage', function() {
 
   describe('@constructor', function() {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     var testMongoURI, testMongoOptions, testStorageOptions;
     beforeEach(() => {
       sandbox.stub(Storage.prototype, '_connect');
@@ -78,7 +78,7 @@ describe('Storage', function() {
   });
 
   describe('#_connect', function() {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     var testMongoURI, testMongoOptions, testStorageOptions,
         storage, testConnection, testLogger;
     beforeEach(() => {
@@ -150,7 +150,7 @@ describe('Storage', function() {
   });
 
   describe('#_createBoundModels', function() {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     var testMongoURI, testMongoOptions, testStorageOptions, storage;
     beforeEach(() => {
       testMongoURI = 'mongodb://127.0.0.1:27017/__storj-bridge-test';

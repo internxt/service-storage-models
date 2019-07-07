@@ -349,7 +349,7 @@ describe('Storage/models/User', function() {
   });
 
   describe('#recordUploadBytes', function() {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     afterEach(() => sandbox.restore());
 
     it('should record the bytes and increment existing', function(done) {

@@ -152,7 +152,7 @@ describe('Storage/models/Contact', function() {
   });
 
   describe('#recordPoints', function() {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     afterEach(() => sandbox.restore());
 
     it('it should not go above maximum', function() {
@@ -190,7 +190,7 @@ describe('Storage/models/Contact', function() {
   });
 
   describe('#recordTimeoutFailure', function() {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     afterEach(() => sandbox.restore());
 
     it('will set last timeout', function() {
@@ -388,7 +388,7 @@ describe('Storage/models/Contact', function() {
   });
 
   describe('#updateLastContractSent', function() {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     afterEach(() => sandbox.restore());
 
     it('will update the last contract sent time', function(done) {
