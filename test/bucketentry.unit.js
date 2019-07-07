@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const storj = require('storj-lib');
 const expect = require('chai').expect;
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const errors = require('storj-service-error-types');
 
 require('mongoose-types').loadTypes(mongoose);

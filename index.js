@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const merge = require('merge');
 require('dotenv').config({ silent: true });
 

@@ -4,7 +4,7 @@
 
 const async = require('async');
 const expect = require('chai').expect;
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const crypto = require('crypto');
 const errors = require('storj-service-error-types');
 

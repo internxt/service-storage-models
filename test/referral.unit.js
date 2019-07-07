@@ -5,7 +5,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const chaiDate = require('chai-datetime');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const {
   PROMO_CODE,
   PROMO_EXPIRES,

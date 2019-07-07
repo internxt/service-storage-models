@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 
 const PaymentProcessorSchema = require('../lib/models/payment-processor');
 

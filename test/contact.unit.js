@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const async = require('async');
 const expect = require('chai').expect;
 const errors = require('storj-service-error-types');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const storj = require('storj-lib');
 
 /*jshint maxstatements: 100 */

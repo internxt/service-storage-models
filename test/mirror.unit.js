@@ -3,7 +3,7 @@
 /*jshint expr: true*/
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const storj = require('storj-lib');
 
 require('mongoose-types').loadTypes(mongoose);

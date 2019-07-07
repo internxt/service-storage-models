@@ -3,7 +3,7 @@
 /* jshint expr: true, maxlen: 100 */
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 mongoose.plugin(schema => { schema.options.usePushEach = true; });
 const _ = require('lodash');
 

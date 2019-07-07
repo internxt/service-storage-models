@@ -6,7 +6,7 @@ const async = require('async');
 const crypto = require('crypto');
 const errors = require('storj-service-error-types');
 const { expect } = require('chai');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const sinon = require('sinon');
 const ms = require('ms');
 const validateUUID = require('uuid-validate');
