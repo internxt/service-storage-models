@@ -13,19 +13,20 @@ const PartnerSchema = require('../lib/models/partner');
 var Partner;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Partner = PartnerSchema(connection);
-      Partner.remove({}, function() {
+      Partner.deleteMany({}, function() {
         done();
       });
     }
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -129,7 +130,7 @@ describe('/Storage/models/Partner', function() {
     });
   });
 
-  describe('#modifyRevShare', function () {
+  describe('#modifyRevShare', () => {
 
     it('should change field and update modified date', function (done) {
       let firstDate;

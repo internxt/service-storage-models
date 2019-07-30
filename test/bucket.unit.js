@@ -2,7 +2,8 @@
 
 const storj = require('storj-lib');
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 const errors = require('storj-service-error-types');
 
 require('mongoose-types').loadTypes(mongoose);
@@ -12,12 +13,13 @@ const BucketSchema = require('../lib/models/bucket');
 var Bucket;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Bucket = BucketSchema(connection);
-      Bucket.remove({}, function() {
+      Bucket.deleteMany({}, function() {
         done();
       });
 
@@ -25,7 +27,7 @@ before(function(done) {
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -33,7 +35,7 @@ describe('Storage/models/Bucket', function() {
 
   describe('#create', function() {
 
-    it('should create the bucket with the default props', function(done) {
+    it('should create the bucket with the default props', done => {
 
       // XXX DEPRECATED IN THE NEXT MAJOR RELEASE
       var expectedBucketId =
@@ -68,7 +70,7 @@ describe('Storage/models/Bucket', function() {
       });
     });
 
-    it('should allow an update to to the publicPermissions', function(done) {
+    it('should allow an update to to the publicPermissions', done => {
       Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
         expect(err).to.not.be.instanceOf(Error);
         bucket.publicPermissions = ['PUSH', 'PULL'];
@@ -81,7 +83,7 @@ describe('Storage/models/Bucket', function() {
       });
     });
 
-    it('should reject invalid permissions request', function(done) {
+    it('should reject invalid permissions request', done => {
       Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
         expect(err).to.not.be.instanceOf(Error);
         bucket.publicPermissions = ['INVALID'];
@@ -92,7 +94,7 @@ describe('Storage/models/Bucket', function() {
       });
     });
 
-    it('should reject a duplicate name', function(done) {
+    it('should reject a duplicate name', done => {
       Bucket.create(
         { _id: 'user@domain.tld' },
         { name: 'New Bucket' },
@@ -104,7 +106,7 @@ describe('Storage/models/Bucket', function() {
     });
 
     it('should create the bucket with the given special character',
-      function(done) {
+      done => {
         Bucket.create({ _id: 'user@domain.tld' }, {
           name: 'My Bucket with special character üèß'
         }, function(err, bucket) {
@@ -121,7 +123,7 @@ describe('Storage/models/Bucket', function() {
       });
     });
 
-    it('should create the bucket with the given key', function(done) {
+    it('should create the bucket with the given key', done => {
       var publicKey1 = storj.KeyPair().getPublicKey();
       var publicKey2 = storj.KeyPair().getPublicKey();
       expect(publicKey1).to.not.equal(publicKey2);
@@ -140,7 +142,7 @@ describe('Storage/models/Bucket', function() {
       });
     });
 
-    it('should create the bucket with duplicate key', function(done) {
+    it('should create the bucket with duplicate key', done => {
       var publicKey = storj.KeyPair().getPublicKey();
       Bucket.create({ _id: 'user@domain.tld' }, {
         pubkeys: [publicKey, publicKey]
@@ -161,7 +163,7 @@ describe('Storage/models/Bucket', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', function(done) {
+    it('should contain specified properties', done => {
       Bucket.create({ _id: 'user@domain.tld' }, { name: 'uber-cool' },
         function(err, bucket) {
           if (err) {

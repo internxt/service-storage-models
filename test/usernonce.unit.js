@@ -13,14 +13,15 @@ var UserNonce;
 var User;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       UserNonce = UserNonceSchema(connection);
       User = UserSchema(connection);
-      UserNonce.remove({}, function() {
-        User.remove({}, function() {
+      UserNonce.deleteMany({}, function() {
+        User.deleteMany({}, function() {
           done();
         });
       });
@@ -28,7 +29,7 @@ before(function(done) {
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -39,7 +40,7 @@ function sha256(i) {
 describe('Storage/models/UserNonce', function() {
   const n = '9f7c5d7f20f7e002b59361d9f4d267b3b64903121208ef094203759f9f650d0e';
 
-  before(function(done) {
+  before(done => {
     User.create('usernonce@tld.com', sha256('pass'), function(err) {
       if (err) {
         return done(err);
@@ -49,7 +50,7 @@ describe('Storage/models/UserNonce', function() {
   });
 
   describe('@constructor', function() {
-    it('should fail validation', function(done) {
+    it('should fail validation', done => {
       const nonce = new UserNonce({
         user: 'nobody@',
         nonce: n
@@ -60,7 +61,7 @@ describe('Storage/models/UserNonce', function() {
         done();
       });
     });
-    it('should NOT fail validation', function(done) {
+    it('should NOT fail validation', done => {
       const nonce = new UserNonce({
         user: 'somebody@somewhere.com',
         nonce: n
@@ -71,7 +72,7 @@ describe('Storage/models/UserNonce', function() {
 
   describe('#create', function() {
 
-    it('should create a user nonce with correct props', function(done) {
+    it('should create a user nonce with correct props', done => {
       User.findOne({ _id: 'usernonce@tld.com' }, function(err, user) {
         const info = {
           user: user._id,
@@ -89,7 +90,7 @@ describe('Storage/models/UserNonce', function() {
       });
     });
 
-    it('should fail if a nonce is duplicated', function(done) {
+    it('should fail if a nonce is duplicated', done => {
       User.findOne({ _id: 'usernonce@tld.com' }, function(err, user) {
         const info = {
           user: user._id,
@@ -109,7 +110,7 @@ describe('Storage/models/UserNonce', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', function(done) {
+    it('should contain specified properties', done => {
       User.findOne({ _id: 'usernonce@tld.com' }, function(err, user) {
         const info = {
           user: user._id,

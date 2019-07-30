@@ -5,7 +5,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 const chaiDate = require('chai-datetime');
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 const {
   PROMO_CODE,
   PROMO_EXPIRES,
@@ -26,16 +27,17 @@ var Marketing;
 var Credit;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Referral = ReferralSchema(connection);
       Marketing =  MarketingSchema(connection);
       Credit = CreditSchema(connection);
-      Referral.remove({}, function() {
-        Marketing.remove({}, function() {
-          Credit.remove({}, function() {
+      Referral.deleteMany({}, function() {
+        Marketing.deleteMany({}, function() {
+          Credit.deleteMany({}, function() {
             done();
           });
         });
@@ -44,7 +46,7 @@ before(function(done) {
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -55,7 +57,7 @@ describe('Storage/models/Referral', function() {
 
   describe('#create', function() {
 
-    it('should create a new referral with default props', function(done) {
+    it('should create a new referral with default props', done => {
       Marketing.create('sender@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@a.com', 'email')
           .then((referral) => {
@@ -84,7 +86,7 @@ describe('Storage/models/Referral', function() {
       });
     });
 
-    it('should fail with wrong referral type', function(done) {
+    it('should fail with wrong referral type', done => {
       Marketing.create('sender5@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@a.com', 'something')
           .catch((err) => {
@@ -95,7 +97,7 @@ describe('Storage/models/Referral', function() {
       });
     });
 
-    it('should reject invalid email', function(done) {
+    it('should reject invalid email', done => {
       Marketing.create('sender6@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'wrongemail.com', 'email')
           .catch((err) => {
@@ -106,7 +108,7 @@ describe('Storage/models/Referral', function() {
       });
     });
 
-    it('should fail with undefined marketing doc', function(done) {
+    it('should fail with undefined marketing doc', done => {
       Referral.create(null, 'user@domain.tld', 'email')
         .catch((err) => {
           expect(err).to.be.an.instanceOf(Error);
@@ -115,7 +117,7 @@ describe('Storage/models/Referral', function() {
         });
     });
 
-    it('should not create duplicate doc', function(done) {
+    it('should not create duplicate doc', done => {
       Marketing.create('sender11@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@bob.com', 'email')
           .then((referral) => {
@@ -137,7 +139,7 @@ describe('Storage/models/Referral', function() {
     });
 
 
-    it('should increase referral sent count', function(done) {
+    it('should increase referral sent count', done => {
       Marketing.create('sender12@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@bob.com', 'email')
           .then(() => Referral.create(marketing, 'recipient@bob.com', 'email'))
@@ -158,7 +160,7 @@ describe('Storage/models/Referral', function() {
 
   describe('#convert_receipient_signup', function() {
 
-    it('should set convert.recipient_signup to today', function(done) {
+    it('should set convert.recipient_signup to today', done => {
       Marketing.create('sender3@domain.tld', function(err, marketing) {
         const newCredit = new Credit({
           user: 'recipient@a.com',
@@ -181,7 +183,7 @@ describe('Storage/models/Referral', function() {
       });
     });
 
-    it('should set recipient.referral.credit to credit._id', function(done) {
+    it('should set recipient.referral.credit to credit._id', done => {
       Marketing.create('sender4@domain.tld', function(err, marketing) {
         const newCredit = new Credit({
           user: 'recipient2@a.com',
@@ -203,7 +205,7 @@ describe('Storage/models/Referral', function() {
       });
     });
 
-    it('should reject if no !credit', function(done) {
+    it('should reject if no !credit', done => {
       Marketing.create('sende54@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient2@a.com', 'email')
           .then((referral) => referral.convert_recipient_signup(null))
@@ -219,7 +221,7 @@ describe('Storage/models/Referral', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', function(done) {
+    it('should contain specified properties', done => {
       Marketing.create('sender9@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@a.com', 'email')
           .then((referral) => {
@@ -239,7 +241,7 @@ describe('Storage/models/Referral', function() {
 
   describe('#pre-save', function() {
 
-    it('should fail trying to save sender credit prematurely', function(done) {
+    it('should fail trying to save sender credit prematurely', done => {
       Marketing.create('sender7@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@b.com', 'email')
           .then((referral) => {
@@ -257,7 +259,7 @@ describe('Storage/models/Referral', function() {
       });
     });
 
-    it('should move on if recipient_billed validation passes', function(done) {
+    it('should move on if recipient_billed validation passes', done => {
       Marketing.create('sender8@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@b.com', 'email')
           .then((referral) => {
@@ -294,7 +296,7 @@ describe('Storage/models/Referral', function() {
       });
     });
 
-    it('should fail if recipient_billed validation fails', function(done) {
+    it('should fail if recipient_billed validation fails', done => {
       Marketing.create('sender19@domain.tld', function(err, marketing) {
         Referral.create(marketing, 'recipient@b.com', 'email')
           .then((referral) => {

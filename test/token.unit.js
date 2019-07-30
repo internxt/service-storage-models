@@ -12,14 +12,15 @@ var Token;
 var Bucket;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Token = TokenSchema(connection);
       Bucket = BucketSchema(connection);
-      Token.remove({}, function() {
-        Bucket.remove({}, function() {
+      Token.deleteMany({}, function() {
+        Bucket.deleteMany({}, function() {
           done();
         });
       });
@@ -27,7 +28,7 @@ before(function(done) {
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -35,7 +36,7 @@ describe('Storage/models/Token', function() {
 
   describe('#create', function() {
 
-    it('should create the token for the bucket', function(done) {
+    it('should create the token for the bucket', done => {
       Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
         Token.create(bucket, 'PUSH', function(err, token) {
           expect(err).to.not.be.instanceOf(Error);
@@ -46,7 +47,7 @@ describe('Storage/models/Token', function() {
       });
     });
 
-    it('should not create the token for invalid operation', function(done) {
+    it('should not create the token for invalid operation', done => {
       Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
         Token.create(bucket, 'Push', function(err) {
           expect(err.message).to.match(/^token validation failed.*/i);
@@ -67,7 +68,7 @@ describe('Storage/models/Token', function() {
 
   describe('#lookup', function() {
 
-    it('should return the token object', function(done) {
+    it('should return the token object', done => {
       Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
         Token.create(bucket, 'PUSH', function(err, token) {
           expect(err).to.not.be.instanceOf(Error);
@@ -84,7 +85,7 @@ describe('Storage/models/Token', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties + virtuals', function(done) {
+    it('should contain specified properties + virtuals', done => {
       Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
         Token.create(bucket, 'PUSH', function(err, token) {
           expect(err).to.not.be.instanceOf(Error);

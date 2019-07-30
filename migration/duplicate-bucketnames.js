@@ -19,7 +19,7 @@ var uniqueBucketNames = function() {
         var id = data.duplicates[i];
         var name = data._id.bucketName + ' (' + i + ')';
         print("updating id: " + id + " original: " + data._id.bucketName + " to name: " + name);
-        db.buckets.update({ _id: id }, { $set: {name: name} }, (err, result) => {
+        db.buckets.updateOne({ _id: id }, { $set: {name: name} }, (err, result) => {
           print(err || result);
         })
       }      

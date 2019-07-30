@@ -57,7 +57,8 @@ Storage.prototype._connect = function() {
       auto_reconnect: true,
       reconnectTries: Number.MAX_VALUE,
       reconnectInterval: 5000
-    }
+    },
+    useNewUrlParser: true, useCreateIndex: true
   };
 
   var opts = merge.recursive(true, defaultOpts, this._options);

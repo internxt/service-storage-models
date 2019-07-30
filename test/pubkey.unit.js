@@ -11,19 +11,20 @@ const PublicKeySchema = require('../lib/models/pubkey');
 var PublicKey;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       PublicKey = PublicKeySchema(connection);
-      PublicKey.remove({}, function() {
+      PublicKey.deleteMany({}, function() {
         done();
       });
     }
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -31,7 +32,7 @@ describe('Storage/models/PublicKey', function() {
 
   var publicKey = storj.KeyPair().getPublicKey();
 
-  it('should create the public key', function(done) {
+  it('should create the public key', done => {
     PublicKey.create({
       _id: 'user@domain.tld'
     }, publicKey, function(err, pubkey) {
@@ -41,7 +42,7 @@ describe('Storage/models/PublicKey', function() {
     });
   });
 
-  it('should create the public with spam resistent email', function(done) {
+  it('should create the public with spam resistent email', done => {
 
     var publicKey2 = storj.KeyPair().getPublicKey();
 
@@ -61,7 +62,7 @@ describe('Storage/models/PublicKey', function() {
     });
   });
 
-  it('should not create duplicate key', function(done) {
+  it('should not create duplicate key', done => {
     PublicKey.create({
       _id: 'user@domain.tld'
     }, publicKey, function(err) {
@@ -72,7 +73,7 @@ describe('Storage/models/PublicKey', function() {
     });
   });
 
-  it('should reject an invalid ecdsa key', function(done) {
+  it('should reject an invalid ecdsa key', done => {
     PublicKey.create({
       _id: 'user@domain.tld'
     }, 'testkey', function(err) {
@@ -83,7 +84,7 @@ describe('Storage/models/PublicKey', function() {
     });
   });
 
-  it('should reject an non-hex encoded ecdsa key', function(done) {
+  it('should reject an non-hex encoded ecdsa key', done => {
     PublicKey.create({
       _id: 'user@domain.tld'
     }, 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVKTbNAB1ViPHwNyTYFPm07YfoDAwNmh3c' +
@@ -95,7 +96,7 @@ describe('Storage/models/PublicKey', function() {
     });
   });
 
-  it('should reject an invalid hex string', function(done) {
+  it('should reject an invalid hex string', done => {
     PublicKey.create(
       {
         _id: 'user@domain.tld'
@@ -111,7 +112,7 @@ describe('Storage/models/PublicKey', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties + virtuals', function(done) {
+    it('should contain specified properties + virtuals', done => {
       var publicKey = storj.KeyPair().getPublicKey();
       PublicKey.create({
         _id: 'user@domain.tld'

@@ -14,26 +14,27 @@ const DEBIT_TYPES = constants.DEBIT_TYPES;
 var Debit;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Debit = DebitSchema(connection);
-      Debit.remove({}, function() {
+      Debit.deleteMany({}, function() {
         done();
       });
     }
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
 describe('Storage/models/Debit', function() {
 
   describe('@constructor', function() {
-    it('should fail validation', function(done) {
+    it('should fail validation', done => {
       const debit = new Debit({
         user: 'nobody@',
         amount: 10000,
@@ -45,7 +46,7 @@ describe('Storage/models/Debit', function() {
         done();
       });
     });
-    it('should NOT fail validation', function(done) {
+    it('should NOT fail validation', done => {
       const debit = new Debit({
         user: 'somebody@somewhere.com',
         amount: 10000,
@@ -57,7 +58,7 @@ describe('Storage/models/Debit', function() {
 
   describe('#create', function() {
 
-    it('should create debit with default props', function(done) {
+    it('should create debit with default props', done => {
       var newDebit = new Debit({
         user: 'user@domain.tld',
         type: DEBIT_TYPES.STORAGE,
@@ -83,7 +84,7 @@ describe('Storage/models/Debit', function() {
       });
     });
 
-    it('should maintain 10000th debit amount accuracy', function(done) {
+    it('should maintain 10000th debit amount accuracy', done => {
       var debitAmount = 1234.5678;
       var newDebit = new Debit({
         user: 'user@domain.tld',
@@ -100,7 +101,7 @@ describe('Storage/models/Debit', function() {
       });
     });
 
-    it('should reject type if not enum', function(done) {
+    it('should reject type if not enum', done => {
       var newDebit = new Debit({
         user: 'user@domain.tld',
         type: 'NOT-A-DEBIT-ENUM',
@@ -114,7 +115,7 @@ describe('Storage/models/Debit', function() {
       });
     });
 
-    it('shouldn\'t save null for amount', function(done) {
+    it('shouldn\'t save null for amount', done => {
       var newDebit = new Debit({
         user: 'user@domain.tld',
         type: DEBIT_TYPES.STORAGE,
@@ -129,7 +130,7 @@ describe('Storage/models/Debit', function() {
     });
 
     it('should not undefined debit amount (no default)',
-      function(done) {
+      done => {
         var newDebit = new Debit({
           user: 'user@domain.tld',
           type: DEBIT_TYPES.STORAGE,
@@ -143,7 +144,7 @@ describe('Storage/models/Debit', function() {
         });
     });
 
-    it('should fail without amount', function(done) {
+    it('should fail without amount', done => {
       var newDebit = new Debit({
         user: 'user@domain.tld',
         type: DEBIT_TYPES.STORAGE
@@ -156,7 +157,7 @@ describe('Storage/models/Debit', function() {
       });
     });
 
-    it('should fail if bandwidth is not an integer', function(done) {
+    it('should fail if bandwidth is not an integer', done => {
       var newDebit = new Debit({
         user: 'user@domain.tld',
         type: DEBIT_TYPES.STORAGE,
@@ -171,7 +172,7 @@ describe('Storage/models/Debit', function() {
       });
     });
 
-    it('should fail if storage is not an integer', function(done) {
+    it('should fail if storage is not an integer', done => {
       var newDebit = new Debit({
         user: 'user@domain.tld',
         type: DEBIT_TYPES.STORAGE,
@@ -190,7 +191,7 @@ describe('Storage/models/Debit', function() {
 
   describe('#toJSON', function() {
 
-    it('should remove specified fields', function(done) {
+    it('should remove specified fields', done => {
       const newDebit = new Debit({
         user: 'user@domain.tld',
         type: DEBIT_TYPES.STORAGE,
@@ -209,7 +210,7 @@ describe('Storage/models/Debit', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', function(done) {
+    it('should contain specified properties', done => {
       const newDebit = new Debit({
         user: 'user@domain.tld',
         type: DEBIT_TYPES.STORAGE,

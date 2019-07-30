@@ -21,7 +21,7 @@ describe('stripe', () => {
       stringTest1: 'string',
       nullTest1: null,
       undefinedTest1: undefined,
-      functionTest1: function () {
+      functionTest1: () => {
         return 'functionTest';
       },
       objectTest1: {
@@ -29,7 +29,7 @@ describe('stripe', () => {
         stringTest2: 'string',
         nullTest2: null,
         undefinedTest2: undefined,
-        functionTest2: function () {
+        functionTest2: () => {
           return 'functionTest';
         },
         objectTest2: {
@@ -37,7 +37,7 @@ describe('stripe', () => {
           stringTest3: 'string',
           nullTest3: null,
           undefinedTest3: undefined,
-          functionTest3: function () {
+          functionTest3: () => {
             return 'functionTest';
           }
         }

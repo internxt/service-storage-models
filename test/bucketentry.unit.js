@@ -17,16 +17,17 @@ var Bucket;
 var BucketEntry;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Frame = FrameSchema(connection);
       Bucket = BucketSchema(connection);
       BucketEntry = BucketEntrySchema(connection);
-      Frame.remove({}, function() {
-        Bucket.remove({}, function() {
-          BucketEntry.remove({}, function(){
+      Frame.deleteMany({}, function() {
+        Bucket.deleteMany({}, function() {
+          BucketEntry.deleteMany({}, function(){
             done();
           });
         });
@@ -35,7 +36,7 @@ before(function(done) {
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -48,7 +49,7 @@ describe('Storage/models/BucketEntry', function() {
   var expectedFileId =
     storj.utils.calculateFileId(expectedBucketId, 'test.txt');
 
-  it('should create the bucket entry metadata', function(done) {
+  it('should create the bucket entry metadata', done => {
     const index = crypto.randomBytes(32).toString('hex');
     Bucket.create({ _id: 'user@domain.tld' }, { name: 'New Bucket2' },
                   function(err, bucket) {
@@ -82,7 +83,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should give error with invalid erasure type', function(done) {
+  it('should give error with invalid erasure type', done => {
     Bucket.create({ _id: 'user@domain.tld' }, { name: 'New Bucket3' },
     function(err, bucket) {
       var frame = new Frame({});
@@ -104,7 +105,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should replace a duplicate name in this same bucket', function(done) {
+  it('should replace a duplicate name in this same bucket', done => {
     var frame = new Frame({
 
     });
@@ -124,7 +125,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should fail with invalid mimetype', function(done) {
+  it('should fail with invalid mimetype', done => {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -143,7 +144,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should create bucket entry with hmac value', function(done) {
+  it('should create bucket entry with hmac value', done => {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -177,7 +178,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should NOT create bucket entry with invalid hmac type', function(done) {
+  it('should NOT create bucket entry with invalid hmac type', done => {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -203,7 +204,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should NOT create bucket entry with long hmac value', function(done) {
+  it('should NOT create bucket entry with long hmac value', done => {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -227,7 +228,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should NOT create bucket entry with non-hex hmac value', function(done) {
+  it('should NOT create bucket entry with non-hex hmac value', done => {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -251,7 +252,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should contain specified properties', function(done) {
+  it('should contain specified properties', done => {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -280,7 +281,7 @@ describe('Storage/models/BucketEntry', function() {
   describe('Indexes', function() {
     let entry = null;
 
-    before(function(done) {
+    before(done => {
       Bucket.create({ _id: 'user@domain.tld' }, {}, (err, bucket) => {
         if (err) {
           return done(err);
@@ -307,7 +308,7 @@ describe('Storage/models/BucketEntry', function() {
       });
     });
 
-    it('should have an index for created', function(done) {
+    it('should have an index for created', done => {
       const now = Date.now();
       const query = {
         'created': {

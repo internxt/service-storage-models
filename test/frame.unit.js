@@ -19,16 +19,17 @@ var User;
 var Pointer;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Frame = FrameSchema(connection);
       User = UserSchema(connection);
-      Frame.remove({}, function() {
-        User.remove({}, function() {
+      Frame.deleteMany({}, function() {
+        User.deleteMany({}, function() {
           Pointer = PointerSchema(connection);
-          Pointer.remove({}, function() {
+          Pointer.deleteMany({}, function() {
             done();
           });
         });
@@ -37,7 +38,7 @@ before(function(done) {
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -48,7 +49,7 @@ function sha256(i) {
 describe('Storage/models/Frame', function() {
 
   describe('@constructor', function() {
-    it('should fail validation', function(done) {
+    it('should fail validation', done => {
       const frame = new Frame({
         user: 'nobody@'
       });
@@ -58,7 +59,7 @@ describe('Storage/models/Frame', function() {
         done();
       });
     });
-    it('should NOT fail validation', function(done) {
+    it('should NOT fail validation', done => {
       const frame = new Frame({
         user: 'somebody@somewhere.com',
       });
@@ -68,7 +69,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#create', function() {
 
-    it('should create a frame with default props', function(done) {
+    it('should create a frame with default props', done => {
       User.create('user@domain.tld', sha256('password'), function(err, user) {
         Frame.create(user, function(err, frame) {
           expect(err).to.not.be.an.instanceOf(Error);
@@ -79,7 +80,7 @@ describe('Storage/models/Frame', function() {
           expect(frame.shards).to.be.an('array');
 
           // cleanup
-          User.findOneAndRemove({ _id: user._id }, function(err) {
+          User.findOneAndDelete({ _id: user._id }, function(err) {
             expect(err).to.not.be.an.instanceOf(Error);
             done();
           });
@@ -91,7 +92,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#lock', function() {
 
-    it('should set frame.lock to true', function(done) {
+    it('should set frame.lock to true', done => {
       Frame.create({}, function(err, frame) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(frame.locked).to.be.false;
@@ -426,7 +427,7 @@ describe('Storage/models/Frame', function() {
   });
 
   describe('#addShard', function() {
-    it('will increment sizes with concurrency', function(done) {
+    it('will increment sizes with concurrency', done => {
       const replacementHash = crypto.randomBytes(20).toString('hex');
       let hashes = [];
       var frame = null;
@@ -514,7 +515,7 @@ describe('Storage/models/Frame', function() {
       });
     });
 
-    it('will fail if there are multiple shards under the min', function(done) {
+    it('will fail if there are multiple shards under the min', done => {
       const replacementHash = crypto.randomBytes(20).toString('hex');
       let hashes = [];
       var frame = null;
@@ -590,7 +591,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#unlock', function() {
 
-    it('should set frame.lock to false', function(done) {
+    it('should set frame.lock to false', done => {
       Frame.create({}, function(err, frame) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(frame.locked).to.be.false;
@@ -610,7 +611,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', function(done) {
+    it('should contain specified properties', done => {
       Frame.create({}, function(err, frame) {
         expect(err).to.not.be.an.instanceOf(Error);
         const keys = Object.keys(frame.toObject());

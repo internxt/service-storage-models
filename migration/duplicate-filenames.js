@@ -20,7 +20,7 @@ var uniqueBucketEntryNames = function() {
         var id = data.duplicates[i];
         var name = data._id.fileName + ' (' + i + ')';
         print("updating id: " + id + " original: " + data._id.fileName + " to name: " + name);
-        db.bucketentries.update({ _id: id }, { $set: {name: name} }, (err, result) => {
+        db.bucketentries.updateOne({ _id: id }, { $set: {name: name} }, (err, result) => {
           print(err || result);
         })
       }

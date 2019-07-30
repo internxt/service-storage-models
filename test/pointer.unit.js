@@ -10,19 +10,20 @@ const PointerSchema = require('../lib/models/pointer');
 var Pointer;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       Pointer = PointerSchema(connection);
-      Pointer.remove({}, function() {
+      Pointer.deleteMany({}, function() {
         done();
       });
     }
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -30,7 +31,7 @@ describe('Storage/models/Pointer', function() {
 
   describe('#create', function() {
 
-    it('should create pointer with correct props', function(done) {
+    it('should create pointer with correct props', done => {
       var shard = {
         index: 1,
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',
@@ -75,7 +76,7 @@ describe('Storage/models/Pointer', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', function(done) {
+    it('should contain specified properties', done => {
       var shard = {
         index: 1,
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',

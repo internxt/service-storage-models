@@ -10,25 +10,26 @@ const StorageEventSchema = require('../lib/models/storage-event');
 var StorageEvent;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true },
     function() {
       StorageEvent = StorageEventSchema(connection);
-      StorageEvent.remove({}, function() {
+      StorageEvent.deleteMany({}, function() {
         done();
       });
     }
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
 describe('Storage/models/Storage-Event', function() {
 
-  it('should create storage event with default props', function(done) {
+  it('should create storage event with default props', done => {
     var newStorageEvent = new StorageEvent({
       bucket: mongoose.Types.ObjectId(),
       bucketEntry: mongoose.Types.ObjectId(),
@@ -50,7 +51,7 @@ describe('Storage/models/Storage-Event', function() {
     });
   });
 
-  it('should not save without a bucket', function(done) {
+  it('should not save without a bucket', done => {
     var newStorageEvent = new StorageEvent({
       bucketEntry: mongoose.Types.ObjectId(),
       user: 'user@gmail.com',
@@ -64,7 +65,7 @@ describe('Storage/models/Storage-Event', function() {
       });
   });
 
-  it('should not save without a bucketEntry', function(done) {
+  it('should not save without a bucketEntry', done => {
     var newStorageEvent = new StorageEvent({
       bucket: mongoose.Types.ObjectId(),
       user: 'user@gmail.com',
@@ -79,7 +80,7 @@ describe('Storage/models/Storage-Event', function() {
   });
 
 
-  it('should not save without a user', function(done) {
+  it('should not save without a user', done => {
     var newStorageEvent = new StorageEvent({
       bucket: mongoose.Types.ObjectId(),
       bucketEntry: mongoose.Types.ObjectId(),

@@ -15,14 +15,15 @@ var Mirror;
 var Contact;
 var connection;
 
-before(function(done) {
+before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
+    { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false },
     function() {
       Mirror = MirrorSchema(connection);
       Contact = ContactSchema(connection);
-      Mirror.remove({}, function() {
-        Contact.remove({}, function() {
+      Mirror.deleteMany({}, function() {
+        Contact.deleteMany({}, function() {
           done();
         });
       });
@@ -31,7 +32,7 @@ before(function(done) {
   );
 });
 
-after(function(done) {
+after(done => {
   connection.close(done);
 });
 
@@ -39,7 +40,7 @@ describe('Storage/models/Mirror', function() {
 
   describe('#create', function() {
 
-    it('should fail without contract', function(done) {
+    it('should fail without contract', done => {
       Mirror.create({}, {}, function(err, mirror) {
         expect(err).to.be.an.instanceOf(Error);
         expect(mirror).to.be.undefined;
@@ -47,7 +48,7 @@ describe('Storage/models/Mirror', function() {
       });
     });
 
-    it ('should fail without contact', function(done) {
+    it ('should fail without contact', done => {
       Mirror.create({ data_hash: 'data_hash' }, {}, function(err, mirror) {
         expect(err).to.be.an.instanceOf(Error);
         expect(mirror).to.be.undefined;
@@ -55,7 +56,7 @@ describe('Storage/models/Mirror', function() {
       });
     });
 
-    it('should create with default props', function(done) {
+    it('should create with default props', done => {
       Contact.record({
         address: '127.0.0.1',
         port: 1337,
@@ -81,7 +82,7 @@ describe('Storage/models/Mirror', function() {
 
   describe('#createWithToken', function() {
 
-    it('create with token', function(done) {
+    it('create with token', done => {
       let contract = {
         data_hash: '838fcd890e2615dcf9a85c372effc388ce5420f2'
       };
@@ -104,7 +105,7 @@ describe('Storage/models/Mirror', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', function(done) {
+    it('should contain specified properties', done => {
       Contact.record({
         address: '127.0.0.1',
         port: 1337,
