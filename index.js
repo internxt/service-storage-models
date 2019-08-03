@@ -51,14 +51,12 @@ Storage.prototype._connect = function() {
   var self = this;
 
   var defaultOpts = {
-    mongos: false,
     ssl: false,
-    server: {
-      auto_reconnect: true,
-      reconnectTries: Number.MAX_VALUE,
-      reconnectInterval: 5000
-    },
-    useNewUrlParser: true, useCreateIndex: true
+    auto_reconnect: true,
+    reconnectTries: Number.MAX_VALUE,
+    reconnectInterval: 5000,
+    useNewUrlParser: true,
+    useCreateIndex: true
   };
 
   var opts = merge.recursive(true, defaultOpts, this._options);
