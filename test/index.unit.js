@@ -110,13 +110,10 @@ describe('Storage', () => {
       storage._connect();
 
       var mergedOptions = merge.recursive(true, {
-        mongos: false,
         ssl: false,
-        server: {
-          auto_reconnect: true,
-          reconnectTries: Number.MAX_VALUE,
-          reconnectInterval: 5000
-        }
+        auto_reconnect: true,
+        reconnectTries: Number.MAX_VALUE,
+        reconnectInterval: 5000
       }, testMongoOptions);
 
       expect(mongooseStub.createConnection.calledWith(
