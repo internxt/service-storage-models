@@ -1,4 +1,4 @@
-Storj Service Storage Models
+Internxt Service Storage Models
 ============================
 
 [![Build Status](https://img.shields.io/travis/Storj/service-storage-models.svg?style=flat-square)](https://travis-ci.org/Storj/service-storage-models)
