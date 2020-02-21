@@ -53,8 +53,6 @@ Storage.prototype._connect = function() {
   var defaultOpts = {
     ssl: false,
     auto_reconnect: true,
-    reconnectTries: Number.MAX_VALUE,
-    reconnectInterval: 5000,
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true
