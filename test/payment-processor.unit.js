@@ -14,7 +14,7 @@ require('mongoose-types').loadTypes(mongoose);
 before(function (done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true },
+    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     () => {
       PaymentProcessor = PaymentProcessorSchema(connection);
       PaymentProcessor.deleteMany({}, done);

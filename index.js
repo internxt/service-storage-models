@@ -56,7 +56,8 @@ Storage.prototype._connect = function() {
     reconnectTries: Number.MAX_VALUE,
     reconnectInterval: 5000,
     useNewUrlParser: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useUnifiedTopology: true
   };
 
   var opts = merge.recursive(true, defaultOpts, this._options);

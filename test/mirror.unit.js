@@ -18,7 +18,12 @@ var connection;
 before(done => {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false },
+    {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false
+    },
     function() {
       Mirror = MirrorSchema(connection);
       Contact = ContactSchema(connection);
