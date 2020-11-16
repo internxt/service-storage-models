@@ -6,6 +6,7 @@ const expect = require('chai').expect;
 const errors = require('storj-service-error-types');
 const mongoose = require('mongoose');
 const storj = require('storj-lib');
+const { AssertionError } = require('assert');
 
 /*jshint maxstatements: 100 */
 
@@ -326,21 +327,21 @@ describe('Storage/models/Contact', function() {
       const contact = new Contact({});
       expect(function() {
         contact.recordResponseTime(NaN);
-      }).to.throw('Assertion');
+      }).to.throw(AssertionError);
     });
 
     it('will throw if number is not finite (Infinity)', function() {
       const contact = new Contact({});
       expect(function() {
         contact.recordResponseTime(Infinity);
-      }).to.throw('Assertion');
+      }).to.throw(AssertionError);
     });
 
     it('will throw if number is not finite (string)', function() {
       const contact = new Contact({});
       expect(function() {
         contact.recordResponseTime('2000');
-      }).to.throw('Assertion');
+      }).to.throw(AssertionError);
     });
 
     it('will start using 10s with 1000 reqs as period', function() {
