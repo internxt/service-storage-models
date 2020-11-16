@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "npm run coverage && npm run linter",
-    "testsuite": "STORJ_ALLOW_LOOPBACK=1 ./node_modules/.bin/mocha test/*.unit.js --recursive",
-    "coverage": "STORJ_ALLOW_LOOPBACK=1 ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive",
+    "testsuite": "cross-env STORJ_ALLOW_LOOPBACK=1 ./node_modules/.bin/mocha test/*.unit.js --recursive",
+    "coverage": "cross-env STORJ_ALLOW_LOOPBACK=1 ./node_modules/.bin/nyc ./node_modules/.bin/_mocha test/*.unit.js --recursive",
     "linter": "./node_modules/.bin/jshint --config .jshintrc ./index.js ./lib ./test",
     "make-docs": "mkdir -p ./jsdoc && rm -r ./jsdoc && ./node_modules/.bin/jsdoc index.js lib -r -R README.md -u ./doc -c .jsdoc.json --verbose -d ./jsdoc && cp -r doc/assets jsdoc/assets",
     "publish-docs": "npm run make-docs && node script/publishdoc.js"
@@ -34,6 +34,7 @@
   "dependencies": {
     "bluebird": "^3.4.7",
     "coinpayments": "^1.1.2",
+    "cross-env": "^7.0.2",
     "dotenv": "^2.0.0",
     "elliptic": "^6.3.2",
     "hat": "0.0.3",
@@ -56,12 +57,11 @@
     "async": "^2.0.1",
     "chai": "^3.5.0",
     "chai-datetime": "^1.4.1",
-    "coveralls": "^2.11.15",
-    "istanbul": "^0.4.5",
     "jshint": "^2.9.4",
     "lodash": "^4.17.4",
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0",
+    "nyc": "^15.1.0",
     "sinon": "^1.17.6"
   }
 }
