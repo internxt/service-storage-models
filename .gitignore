@@ -52,3 +52,5 @@ jspm_packages
 
 # ignore yarn.lock for this particular repo only
 yarn.lock
+
+.vagrant/
