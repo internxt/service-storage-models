@@ -36,7 +36,7 @@ before(function(done) {
 });
 
 after((done) => {
-  connection.close(done)
+  connection.close(done);
 });
 
 describe('Storage/models/BucketEntry', function() {

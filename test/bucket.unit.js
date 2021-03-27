@@ -7,6 +7,8 @@ const errors = require('storj-service-error-types');
 
 require('mongoose-types').loadTypes(mongoose);
 
+mongoose.Promise = require('bluebird');
+
 const BucketSchema = require('../lib/models/bucket');
 
 var Bucket;
@@ -34,7 +36,6 @@ describe('Storage/models/Bucket', function() {
   describe('#create', function() {
 
     it('should create the bucket with the default props', function(done) {
-
       // XXX DEPRECATED IN THE NEXT MAJOR RELEASE
       var expectedBucketId =
         storj.utils.calculateBucketId('user@domain.tld', 'New Bucket');
