@@ -67,7 +67,7 @@ Storage.prototype._connect = function() {
   this.connection = mongoose.createConnection(this._uri, opts);
 
   this.connection.on('error', function(err) {
-    self._log.error('database connection error:', err.message);
+    self._log.error('database connection error: %s', err.message);
   });
 
   this.connection.on('disconnected', function() {
