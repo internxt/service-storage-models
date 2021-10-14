@@ -72,9 +72,6 @@ describe('Storage/models/BucketEntry', function() {
           expect(entry.index).to.equal(index);
           expect(entry.filename).to.equal('test.txt');
 
-          // XXX DEPRECATED IN THE NEXT MAJOR RELEASE
-          expect(entry.id).to.equal(expectedFileId);
-
           expect(entry.id.length).to.equal(24);
           done();
         });
