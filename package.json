@@ -49,8 +49,7 @@
     "storj-lib": "github:internxt/core#v8.7.3-beta",
     "storj-service-error-types": "github:internxt/service-error-types",
     "stripe": "^8.19.0",
-    "uuid": "^3.4.0",
-    "uuid-validate": "0.0.3",
+    "uuid": "^8.3.2",
     "winston": "^3.2.1"
   },
   "devDependencies": {
