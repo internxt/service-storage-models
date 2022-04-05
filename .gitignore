@@ -51,7 +51,7 @@ jspm_packages
 *.tern-port
 
 # ignore yarn.lock for this particular repo only
-yarn.lock
+# yarn.lock
 package-lock.json
 
 .vagrant/
