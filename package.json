@@ -1,6 +1,6 @@
 {
   "name": "storj-service-storage-models",
-  "version": "10.6.1-beta",
+  "version": "10.6.2",
   "description": "common storage models for various storj services",
   "main": "index.js",
   "directories": {
