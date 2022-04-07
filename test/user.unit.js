@@ -9,7 +9,7 @@ const { expect } = require('chai');
 const mongoose = require('mongoose');
 const sinon = require('sinon');
 const ms = require('ms');
-const { validate: uuidValidate, version: uuidVersion } = require('uuid');
+const uuid = require('uuid');
 
 require('mongoose-types').loadTypes(mongoose);
 
@@ -84,7 +84,7 @@ describe('Storage/models/User', function() {
 
     it('should create a valid UUID', function(done) {
       User.create('uuid@domain.tld', sha256('password'), function(err, user) {
-        expect(uuidValidate(user.uuid) && uuidVersion(user.uuid) === 4).to.equal(true);
+        expect(uuid.validate(user.uuid) && uuid.version(user.uuid) === 4).to.equal(true);
         done();
       });
     });
