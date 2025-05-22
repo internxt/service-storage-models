@@ -5,15 +5,17 @@ const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
 const merge = require('merge');
 require('dotenv').config({ silent: true });
 
-require('mongoose-types').loadTypes(mongoose);
 
 mongoose.Promise = require('bluebird');
+// Retains the default behavior of mongoose v5, when we upgrade to mongoose v7 we can remove this
+mongoose.set('strictQuery', false);
 
 /**
  * MongoDB storage interface
  * @constructor
- * @param {Object} mongoConf
- * @param {Object} options
+ * @param {Object} mongoURI
+ * @param {Object} mongoOptions
+ * @param {Object} storageOptions
  */
 function Storage(mongoURI, mongoOptions, storageOptions) {
   if (!(this instanceof Storage)) {
@@ -52,19 +54,27 @@ Storage.prototype._connect = function() {
 
   var defaultOpts = {
     ssl: false,
-    auto_reconnect: true,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true
   };
 
   var opts = merge.recursive(true, defaultOpts, this._options);
 
   this._log.info('opening database connection at %s', this._uri);
+  this._log.info(`database connection options ${JSON.stringify(opts)}`);
+  // TODO: investigate where the options of this._options come from. It is inserting options that are not
+  // valid for mongoose. For example: { auto_reconnect: true, poolSize: 5 }
+  this.connection = mongoose.createConnection(this._uri, defaultOpts);
 
-  this.connection = mongoose.createConnection(this._uri, opts);
-
-  if (this.connection.then) {
+   this._connectionPromise = this.connection.asPromise().then(() => {
+    self._log.info('connected to database');
+    this.models = this._createBoundModels();
+    return self;
+  }).catch(err => {
+    self._log.error('database connection error: ', err);
+    throw err;
+  });
+  // TODO: Remove. This should not be needed since we are using the promise-based connection
+/*   if (this.connection.then) {
+      self._log.info('Using promise-based connection');
     // handle promise rejections rather than using event emmiters
     this.connection.then(() => {
       self._log.info('connected to database');
@@ -72,6 +82,7 @@ Storage.prototype._connect = function() {
       self._log.error('database connection error: ', err);
     });
   } else {
+    self._log.info('Using event-based connection');
     // For unit tests
     this.connection.on('connected', () => {
       self._log.info('connected to database');
@@ -80,13 +91,11 @@ Storage.prototype._connect = function() {
     this.connection.on('error', err => {
       self._log.error('database connection error: ', err);
     });
-  }
-  
-  this.connection.on('disconnected', function() {
+    
+    this.connection.on('disconnected', function() {
     self._log.warn('disconnected from database');
   });
-
-  this.models = this._createBoundModels();
+  } */
 };
 
 /**
@@ -101,6 +110,14 @@ Storage.prototype._createBoundModels = function() {
   }
 
   return bound;
+};
+
+/**
+ * Wait for connection to be ready
+ * @returns {Promise<Storage>}
+ */
+Storage.prototype.ready = function() {
+  return this._connectionPromise;
 };
 
 module.exports = Storage;
