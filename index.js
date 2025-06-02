@@ -51,17 +51,15 @@ Storage.prototype._connect = function() {
   var self = this;
 
   var defaultOpts = {
-    mongos: false,
-    ssl: false,
-    server: {
-      auto_reconnect: true,
-      reconnectTries: Number.MAX_VALUE,
-      reconnectInterval: 5000
-    },
-    useNewUrlParser: true
+    ssl: false,    
   };
 
   var opts = merge.recursive(true, defaultOpts, this._options);
+
+  if (opts.server){
+    this._log.warn(`Deprecated 'server' option detected in database configuration. This option was removed in MongoDB driver 4.x and will be ignored. Please remove it from your configuration. Value: ${JSON.stringify(opts.server)}`);
+    delete opts.server
+  }
 
   this._log.info('opening database connection at %s', this._uri);
 
@@ -94,6 +92,11 @@ Storage.prototype._createBoundModels = function() {
   }
 
   return bound;
+};
+
+
+Storage.prototype.ready = function() {
+  return this._connectionPromise;
 };
 
 module.exports = Storage;
