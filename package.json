@@ -52,7 +52,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "storj-lib": "github:internxt/core#v8.7.3-beta",
     "@types/uuid": "^8.3.4",
     "async": "^3.2.0",
     "chai": "^3.5.0",
