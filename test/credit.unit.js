@@ -6,7 +6,6 @@ const chai = require('chai');
 const expect = chai.expect;
 const chaiDate = require('chai-datetime');
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
 
 chai.use(chaiDate);
 require('mongoose-types').loadTypes(mongoose);
@@ -23,25 +22,19 @@ const {
 var Credit;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
-    'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false
-    },
-    () => {
+    'mongodb://127.0.0.1:27017__storj-bridge-test',
+    function() {
       Credit = CreditSchema(connection);
-      Credit.deleteMany({}, function() {
+      Credit.remove({}, function() {
         done();
       });
     }
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
@@ -49,7 +42,7 @@ describe('Storage/models/Credit', function() {
 
   describe('#create', function() {
 
-    it('should create credit with default paid/invoice', done => {
+    it('should create credit with default paid/invoice', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL
@@ -73,7 +66,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should allow mixed data types for data field', done => {
+    it('should allow mixed data types for data field', function(done) {
       var newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -109,7 +102,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should reject if paid_amount is negative', done => {
+    it('should reject if paid_amount is negative', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -123,7 +116,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should reject if invoiced_amount is negative', done => {
+    it('should reject if invoiced_amount is negative', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -147,7 +140,7 @@ describe('Storage/models/Credit', function() {
 
   describe('#create - paid_amount and invoiced_amount relations', function() {
 
-    it('should fail if trying to save paid without invoiced_amount', done => {
+    it('should fail if trying to save paid without invoiced_amount', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -163,7 +156,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should fail if paid_amount > invoiced_amount', done => {
+    it('should fail if paid_amount > invoiced_amount', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -180,7 +173,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should set paid=true if paid_amount=invoiced_amount && both > 0', done => {
+    it('should set paid=true if paid_amount=invoiced_amount && both > 0', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -198,7 +191,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should set paid=false if paid_amount!=invoiced_amount && both > 0', done => {
+    it('should set paid=false if paid_amount!=invoiced_amount && both > 0', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -217,7 +210,7 @@ describe('Storage/models/Credit', function() {
     });
 
     it('cannot set paid:true if paid_amount !== invoiced_amount',
-      done => {
+      function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -235,7 +228,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should have paid:false if paid_amount is 0', done => {
+    it('should have paid:false if paid_amount is 0', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -256,7 +249,7 @@ describe('Storage/models/Credit', function() {
 
   describe('#create - promo_amount vs paid_amount/invoiced_amount', function() {
 
-    it('should fail if trying to save invoiced_amount and promo_amount', done => {
+    it('should fail if trying to save invoiced_amount and promo_amount', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -273,7 +266,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should fail if trying to save paid_amount and promo_amount', done => {
+    it('should fail if trying to save paid_amount and promo_amount', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -290,7 +283,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should have no paid_amount/invoiced_amount if promo_amount exists', done => {
+    it('should have no paid_amount/invoiced_amount if promo_amount exists', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -305,8 +298,8 @@ describe('Storage/models/Credit', function() {
         }
         // NB: credit.paid_amount and credit_.invoiced_amount are NaN because
         // their type is Number
-        expect(credit.paid_amount).to.be.undefined;
-        expect(credit.invoiced_amount).to.be.undefined;
+        expect(credit.paid_amount).to.be.NaN;
+        expect(credit.invoiced_amount).to.be.NaN;
         expect(credit.paid).to.be.false;
         expect(credit.promo_amount).to.equal(PROMO_AMOUNT.NEW_SIGNUP);
         expect(credit.promo_code).to.equal(PROMO_CODE.NEW_SIGNUP);
@@ -315,7 +308,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should have no promo if paid_amount/invoiced_amount exists', done => {
+    it('should have no promo if paid_amount/invoiced_amount exists', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -327,8 +320,8 @@ describe('Storage/models/Credit', function() {
         if (err) {
           return done(err);
         }
-        expect(credit.promo_amount).to.be.undefined;
-        expect(credit.promo_code).to.be.undefined;
+        expect(credit.promo_amount).to.be.NaN;
+        expect(credit.promo_code).to.be.NaN;
         expect(credit.promo_expires).to.be.undefined;
         done();
       });
@@ -338,7 +331,7 @@ describe('Storage/models/Credit', function() {
 
   describe('#create - promo_amount validations', function() {
 
-    it('should have promo_code if promo_amount is > 0', done => {
+    it('should have promo_code if promo_amount is > 0', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -357,7 +350,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should fail if promo_amount is negative and there is a promo_expires', done => {
+    it('should fail if promo_amount is negative and there is a promo_expires', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -374,7 +367,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should fail if promo_amount > 0 && !promo_code', done => {
+    it('should fail if promo_amount > 0 && !promo_code', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -390,7 +383,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should fail if promo_amount>0 && invalid promo_code', done => {
+    it('should fail if promo_amount>0 && invalid promo_code', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -406,7 +399,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should have valid promo_code if promo_amount is > 0', done => {
+    it('should have valid promo_code if promo_amount is > 0', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -426,7 +419,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should have promo_expires if promo_amount > 0', done => {
+    it('should have promo_expires if promo_amount > 0', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -447,7 +440,7 @@ describe('Storage/models/Credit', function() {
 
   describe('#create - referral promo validations', function() {
 
-    it('should fail if promo_code=referral & !referral_id', done => {
+    it('should fail if promo_code=referral & !referral_id', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.AUTO,
@@ -465,7 +458,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should pass with promo_code=referral & referral_id', done => {
+    it('should pass with promo_code=referral & referral_id', function(done) {
       const referralId = '58acbf051fa3a47de0118b58';
       const newCredit = new Credit({
         user: 'user@domain.tld',
@@ -490,7 +483,7 @@ describe('Storage/models/Credit', function() {
 
     });
 
-    it('should pass if promo_code != referral types', done => {
+    it('should pass if promo_code != referral types', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.AUTO,
@@ -517,7 +510,7 @@ describe('Storage/models/Credit', function() {
 
   describe('#toObject', function() {
 
-    it('should have specified fields for paid/invoiced', done => {
+    it('should have specified fields for paid/invoiced', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -539,7 +532,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should have specified fields for creating promo', done => {
+    it('should have specified fields for creating promo', function(done) {
       const newCredit = new Credit({
         user: 'user@domain.tld',
         type: CREDIT_TYPES.MANUAL,
@@ -561,7 +554,7 @@ describe('Storage/models/Credit', function() {
       });
     });
 
-    it('should call getters', done => {
+    it('should call getters', function(done) {
       const newCredit = new Credit({
         user: 'user123@domain.tld',
         type: CREDIT_TYPES.MANUAL,

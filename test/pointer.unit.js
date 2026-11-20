@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
 
 require('mongoose-types').loadTypes(mongoose);
 
@@ -10,20 +10,19 @@ const PointerSchema = require('../lib/models/pointer');
 var Pointer;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     function() {
       Pointer = PointerSchema(connection);
-      Pointer.deleteMany({}, function() {
+      Pointer.remove({}, function() {
         done();
       });
     }
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
@@ -31,7 +30,7 @@ describe('Storage/models/Pointer', function() {
 
   describe('#create', function() {
 
-    it('should create pointer with correct props', done => {
+    it('should create pointer with correct props', function(done) {
       var shard = {
         index: 1,
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',
@@ -76,7 +75,7 @@ describe('Storage/models/Pointer', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', done => {
+    it('should contain specified properties', function(done) {
       var shard = {
         index: 1,
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',

@@ -3,8 +3,7 @@
 /* jshint expr: true, maxlen: 100 */
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
-mongoose.plugin(schema => { schema.options.usePushEach = true; });
+const mongoose = require('mongoose');
 const _ = require('lodash');
 
 require('mongoose-types').loadTypes(mongoose);
@@ -14,39 +13,38 @@ const ShardSchema = require('../lib/models/shard');
 var Shard;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
-    function () {
+    function() {
       Shard = ShardSchema(connection);
-      Shard.deleteMany({}, function () {
+      Shard.remove({}, function() {
         done();
       });
     }
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
-describe('Storage/models/Shard', function () {
+describe('Storage/models/Shard', function() {
 
-  describe('#create', function () {
+  describe('#create', function() {
 
-    it('should create a shard record with the correct hash', done => {
+    it('should create a shard record with the correct hash', function(done) {
       var item = {
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203'
       };
-      Shard.create(item, function (err, shard) {
+      Shard.create(item, function(err, shard) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(shard.hash).to.equal(item.hash);
         done();
       });
     });
 
-    it('should create a shard record with modified contracts object', done => {
+    it('should create a shard record with modified contracts object', function(done) {
       var item = {
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',
         contracts: { 0: 'contract1', 1: 'contract2' },
@@ -54,7 +52,7 @@ describe('Storage/models/Shard', function () {
         challenges: {},
         meta: {}
       };
-      Shard.create(item, function (err, shard) {
+      Shard.create(item, function(err, shard) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(shard.contracts).to.be.an('object');
         expect(_.isEqual(item.contracts, shard.contracts)).to.be.true;
@@ -62,7 +60,7 @@ describe('Storage/models/Shard', function () {
       });
     });
 
-    it('should create a shard record with modified trees object', done => {
+    it('should create a shard record with modified trees object', function(done) {
       var item = {
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',
         contracts: {},
@@ -70,7 +68,7 @@ describe('Storage/models/Shard', function () {
         challenges: {},
         meta: {}
       };
-      Shard.create(item, function (err, shard) {
+      Shard.create(item, function(err, shard) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(shard.trees).to.be.an('object');
         var i = 0;
@@ -84,7 +82,7 @@ describe('Storage/models/Shard', function () {
       });
     });
 
-    it('should create a shard record with modified challenges object', done => {
+    it('should create a shard record with modified challenges object', function(done) {
       var item = {
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',
         contracts: {},
@@ -92,7 +90,7 @@ describe('Storage/models/Shard', function () {
         challenges: { 0: 'challenge1', 1: 'challenge2' },
         meta: {}
       };
-      Shard.create(item, function (err, shard) {
+      Shard.create(item, function(err, shard) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(shard.challenges).to.be.an('object');
         expect(_.isEqual(item.challenges, shard.challenges)).to.be.true;
@@ -100,7 +98,7 @@ describe('Storage/models/Shard', function () {
       });
     });
 
-    it('should create a shard record with modified meta object', done => {
+    it('should create a shard record with modified meta object', function(done) {
       var item = {
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',
         contracts: {},
@@ -108,7 +106,7 @@ describe('Storage/models/Shard', function () {
         challenges: {},
         meta: { 0: 'meta1', 1: 'meta2' }
       };
-      Shard.create(item, function (err, shard) {
+      Shard.create(item, function(err, shard) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(shard.meta).to.be.an('object');
         expect(_.isEqual(item.meta, shard.meta)).to.be.true;
@@ -118,9 +116,9 @@ describe('Storage/models/Shard', function () {
 
   });
 
-  describe('#toObject', function () {
+  describe('#toObject', function() {
 
-    it('should contain specified properties', done => {
+    it('should contain specified properties', function(done) {
       const item = {
         hash: 'fjla93fs9-23892-2sdl@#ds-932049203',
         contracts: {},
@@ -128,7 +126,7 @@ describe('Storage/models/Shard', function () {
         challenges: {},
         meta: { 0: 'meta1', 1: 'meta2' }
       };
-      Shard.create(item, function (err, shard) {
+      Shard.create(item, function(err, shard) {
         expect(err).to.not.be.an.instanceOf(Error);
         const keys = Object.keys(shard);
         expect(keys).to.not.contain('__v', '_id');
@@ -141,8 +139,8 @@ describe('Storage/models/Shard', function () {
 
   });
 
-  describe('Indexes', function () {
-    before(done => {
+  describe('Indexes', function() {
+    before(function(done) {
       const item = {
         hash: '74f20b9ab3f2a1d6970269dde29f494d8a5895f6',
         contracts: {
@@ -157,42 +155,35 @@ describe('Storage/models/Shard', function () {
       Shard.create(item, done);
     });
 
-    it('should have an index for nodeID on contracts', done => {
+    it('should have an index for nodeID on contracts', function(done) {
       const query = {
         'contracts.nodeID': '2d2d9991ac279857dc72edca1d8ace90b1fce76d',
       };
       const cursor = Shard.collection.find(query);
       cursor.explain((err, result) => {
-        expect(err).to.be.equals(null);
-        expect(result).not.equals(null);
-        /*
-        expect(result.queryPlanner.winningPlan.filter)
+        expect(result.queryPlanner.winningPlan.inputStage.indexBounds)
           .to.eql({
-            'contracts.nodeID': {
-              '$eq': '2d2d9991ac279857dc72edca1d8ace90b1fce76d'
-            }
+            'contracts.nodeID': [
+              '["2d2d9991ac279857dc72edca1d8ace90b1fce76d", ' +
+                '"2d2d9991ac279857dc72edca1d8ace90b1fce76d"]'
+            ]
           });
-        */
         done();
       });
     });
 
-    it('should have an index for store_end on contracts', done => {
+    it('should have an index for store_end on contracts', function(done) {
       const query = {
         'contracts.contract.store_end': 1489085649893,
       };
       const cursor = Shard.collection.find(query);
       cursor.explain((err, result) => {
-        expect(err).to.be.equals(null);
-        expect(result).not.equals(null);
-        /*
-        expect(result.queryPlanner.winningPlan.filter)
+        expect(result.queryPlanner.winningPlan.inputStage.indexBounds)
           .to.eql({
-            'contracts.contract.store_end': {
-              '$eq': 1489085649893.0
-            }
+            'contracts.contract.store_end': [
+              '[1489085649893.0, 1489085649893.0]'
+            ]
           });
-          */
         done();
       });
     });

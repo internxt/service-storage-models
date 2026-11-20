@@ -3,7 +3,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const chaiDate = require('chai-datetime');
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
 
 chai.use(chaiDate);
 require('mongoose-types').loadTypes(mongoose);
@@ -13,20 +13,19 @@ const PartnerSchema = require('../lib/models/partner');
 var Partner;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     function() {
       Partner = PartnerSchema(connection);
-      Partner.deleteMany({}, function() {
+      Partner.remove({}, function() {
         done();
       });
     }
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
@@ -130,7 +129,7 @@ describe('/Storage/models/Partner', function() {
     });
   });
 
-  describe('#modifyRevShare', () => {
+  describe('#modifyRevShare', function () {
 
     it('should change field and update modified date', function (done) {
       let firstDate;

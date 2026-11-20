@@ -3,7 +3,7 @@
 /*jshint expr: true*/
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
 const storj = require('storj-lib');
 
 require('mongoose-types').loadTypes(mongoose);
@@ -15,20 +15,14 @@ var Mirror;
 var Contact;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false
-    },
     function() {
       Mirror = MirrorSchema(connection);
       Contact = ContactSchema(connection);
-      Mirror.deleteMany({}, function() {
-        Contact.deleteMany({}, function() {
+      Mirror.remove({}, function() {
+        Contact.remove({}, function() {
           done();
         });
       });
@@ -37,7 +31,7 @@ before(done => {
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
@@ -45,7 +39,7 @@ describe('Storage/models/Mirror', function() {
 
   describe('#create', function() {
 
-    it('should fail without contract', done => {
+    it('should fail without contract', function(done) {
       Mirror.create({}, {}, function(err, mirror) {
         expect(err).to.be.an.instanceOf(Error);
         expect(mirror).to.be.undefined;
@@ -53,7 +47,7 @@ describe('Storage/models/Mirror', function() {
       });
     });
 
-    it ('should fail without contact', done => {
+    it ('should fail without contact', function(done) {
       Mirror.create({ data_hash: 'data_hash' }, {}, function(err, mirror) {
         expect(err).to.be.an.instanceOf(Error);
         expect(mirror).to.be.undefined;
@@ -61,7 +55,7 @@ describe('Storage/models/Mirror', function() {
       });
     });
 
-    it('should create with default props', done => {
+    it('should create with default props', function(done) {
       Contact.record({
         address: '127.0.0.1',
         port: 1337,
@@ -87,7 +81,7 @@ describe('Storage/models/Mirror', function() {
 
   describe('#createWithToken', function() {
 
-    it('create with token', done => {
+    it('create with token', function(done) {
       let contract = {
         data_hash: '838fcd890e2615dcf9a85c372effc388ce5420f2'
       };
@@ -110,7 +104,7 @@ describe('Storage/models/Mirror', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', done => {
+    it('should contain specified properties', function(done) {
       Contact.record({
         address: '127.0.0.1',
         port: 1337,

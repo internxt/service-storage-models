@@ -14,10 +14,10 @@ var Storage = proxyquire('../index.js', {
   }
 });
 
-describe('Storage', () => {
+describe('Storage', function() {
 
-  describe('@constructor', () => {
-    const sandbox = sinon.createSandbox();
+  describe('@constructor', function() {
+    const sandbox = sinon.sandbox.create();
     var testMongoURI, testMongoOptions, testStorageOptions;
     beforeEach(() => {
       sandbox.stub(Storage.prototype, '_connect');
@@ -27,9 +27,9 @@ describe('Storage', () => {
     });
     afterEach(() => sandbox.restore());
 
-    it('should successfully instantiate with the `new` keyword', () => {
+    it('should successfully instantiate with the `new` keyword', function() {
       var storage = new Storage(testMongoURI, testMongoOptions,
-        testStorageOptions);
+                                testStorageOptions);
 
       expect(storage).to.be.instanceOf(Storage);
       expect(storage._uri).to.equal(testMongoURI);
@@ -38,7 +38,7 @@ describe('Storage', () => {
     });
 
 
-    it('should successfully instantiate without the `new` keyword', () => {
+    it('should successfully instantiate without the `new` keyword', function() {
       var storage = Storage(testMongoURI, testMongoOptions, testStorageOptions);
 
       expect(storage).to.be.instanceOf(Storage);
@@ -47,15 +47,15 @@ describe('Storage', () => {
       expect(storage._connect.callCount).to.equal(1);
     });
 
-    it('should throw an error if mongoOptions is not an object', () => {
-      expect(() => {
+    it('should throw an error if mongoOptions is not an object', function() {
+      expect(function() {
         Storage(testMongoURI, 'testMongoOptions', testStorageOptions);
       }).to.throw('Invalid mongo options supplied');
     });
 
-    it('should use the default logger if no logger is provided', () => {
+    it('should use the default logger if no logger is provided', function() {
       var storage = new Storage(testMongoURI, testMongoOptions,
-        testStorageOptions);
+                                testStorageOptions);
 
       expect(storage._log.info).to.equal(console.log);
       expect(storage._log.debug).to.equal(console.log);
@@ -63,7 +63,7 @@ describe('Storage', () => {
       expect(storage._log.warn).to.equal(console.warn);
     });
 
-    it('should use the logger from storageOptions if provided', () => {
+    it('should use the logger from storageOptions if provided', function() {
       testStorageOptions.logger = {
         'info': 'testInfoLogger',
         'debug': 'testDebugLogger',
@@ -71,29 +71,26 @@ describe('Storage', () => {
         'warn': 'testWarnLogger'
       };
       var storage = new Storage(testMongoURI, testMongoOptions,
-        testStorageOptions);
+                                testStorageOptions);
 
       expect(storage._log).to.equal(testStorageOptions.logger);
     });
   });
 
-  describe('#_connect', () => {
-    const sandbox = sinon.createSandbox();
+  describe('#_connect', function() {
+    const sandbox = sinon.sandbox.create();
     var testMongoURI, testMongoOptions, testStorageOptions,
-      storage, testConnection, testLogger;
+        storage, testConnection, testLogger;
     beforeEach(() => {
       testMongoURI = 'mongodb://127.0.0.1:27017/__storj-bridge-test';
-      testMongoOptions = {
-        option1: 3, option2: 4,
-        useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true
-      };
+      testMongoOptions = {option1: 3, option2: 4};
       testLogger = {
         info: sandbox.stub(),
         debug: sandbox.stub(),
         error: sandbox.stub(),
         warn: sandbox.stub()
       };
-      testStorageOptions = { logger: testLogger };
+      testStorageOptions = {logger: testLogger};
 
       var oldConnect = Storage.prototype._connect;
       sandbox.stub(Storage.prototype, '_connect');
@@ -106,14 +103,17 @@ describe('Storage', () => {
     });
     afterEach(() => sandbox.restore());
 
-    it('should create a connection with the provided options', () => {
+    it('should create a connection with the provided options', function() {
       storage._connect();
 
       var mergedOptions = merge.recursive(true, {
+        mongos: false,
         ssl: false,
-        auto_reconnect: true,
-        reconnectTries: Number.MAX_VALUE,
-        reconnectInterval: 5000
+        server: {
+          auto_reconnect: true,
+          reconnectTries: Number.MAX_VALUE,
+          reconnectInterval: 5000
+        }
       }, testMongoOptions);
 
       expect(mongooseStub.createConnection.calledWith(
@@ -122,19 +122,17 @@ describe('Storage', () => {
       expect(storage._createBoundModels.callCount).to.equal(1);
     });
 
-    it('should log an error message if connection throws an error', () => {
+    it('should log an error message if connection throws an error', function() {
       storage._connect();
 
       var testError = new Error('this is a test error');
       testConnection.emit('error', testError);
 
-      /*
       expect(testLogger.error.calledWithMatch('database connection error',
-        testError.message)).to.equal(true);
-      */
+                                           testError.message)).to.equal(true);
     });
 
-    it('should log a success message if the connection succeeds', () => {
+    it('should log a success message if the connection succeeds', function() {
       storage._connect();
 
       testConnection.emit('connected');
@@ -142,7 +140,7 @@ describe('Storage', () => {
         'connected to database')).to.equal(true);
     });
 
-    it('should log a warning if the connection closes', () => {
+    it('should log a warning if the connection closes', function() {
       storage._connect();
 
       testConnection.emit('disconnected');
@@ -151,8 +149,8 @@ describe('Storage', () => {
     });
   });
 
-  describe('#_createBoundModels', () => {
-    const sandbox = sinon.createSandbox();
+  describe('#_createBoundModels', function() {
+    const sandbox = sinon.sandbox.create();
     var testMongoURI, testMongoOptions, testStorageOptions, storage;
     beforeEach(() => {
       testMongoURI = 'mongodb://127.0.0.1:27017/__storj-bridge-test';
@@ -167,7 +165,7 @@ describe('Storage', () => {
     });
     afterEach(() => sandbox.restore());
 
-    it('should return a list of models bound to the connection', () => {
+    it('should return a list of models bound to the connection', function() {
       var testModels = {
         testModel1: sandbox.stub().returns(1),
         testModel2: sandbox.stub().returns(2)

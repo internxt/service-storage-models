@@ -7,7 +7,7 @@ const proxyquire = require('proxyquire');
 let sandbox;
 
 beforeEach(() => {
-  sandbox = sinon.createSandbox();
+  sandbox = sinon.sandbox.create();
 });
 
 afterEach(() => {
@@ -21,7 +21,7 @@ describe('stripe', () => {
       stringTest1: 'string',
       nullTest1: null,
       undefinedTest1: undefined,
-      functionTest1: () => {
+      functionTest1: function () {
         return 'functionTest';
       },
       objectTest1: {
@@ -29,7 +29,7 @@ describe('stripe', () => {
         stringTest2: 'string',
         nullTest2: null,
         undefinedTest2: undefined,
-        functionTest2: () => {
+        functionTest2: function () {
           return 'functionTest';
         },
         objectTest2: {
@@ -37,7 +37,7 @@ describe('stripe', () => {
           stringTest3: 'string',
           nullTest3: null,
           undefinedTest3: undefined,
-          functionTest3: () => {
+          functionTest3: function () {
             return 'functionTest';
           }
         }

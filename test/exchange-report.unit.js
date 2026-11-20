@@ -2,7 +2,7 @@
 
 // const storj = require('storj-lib');
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
 
 require('mongoose-types').loadTypes(mongoose);
 
@@ -11,26 +11,25 @@ const ExchangeReportSchema = require('../lib/models/exchange-report');
 var ExchangeReport;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     function() {
       ExchangeReport = ExchangeReportSchema(connection);
-      ExchangeReport.deleteMany({}, function() {
+      ExchangeReport.remove({}, function() {
         done();
       });
     }
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
 describe('Storage/models/Exchange-Report', function() {
 
-  it('should create exchange report with default props', done => {
+  it('should create exchange report with default props', function(done) {
     var newExchangeReport = new ExchangeReport({
       reporterId: 'reporterId',
       clientId: 'clientId',

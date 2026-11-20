@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
 
 require('mongoose-types').loadTypes(mongoose);
 
@@ -10,26 +10,25 @@ const StorageEventSchema = require('../lib/models/storage-event');
 var StorageEvent;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     function() {
       StorageEvent = StorageEventSchema(connection);
-      StorageEvent.deleteMany({}, function() {
+      StorageEvent.remove({}, function() {
         done();
       });
     }
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
 describe('Storage/models/Storage-Event', function() {
 
-  it('should create storage event with default props', done => {
+  it('should create storage event with default props', function(done) {
     var newStorageEvent = new StorageEvent({
       bucket: mongoose.Types.ObjectId(),
       bucketEntry: mongoose.Types.ObjectId(),
@@ -51,7 +50,7 @@ describe('Storage/models/Storage-Event', function() {
     });
   });
 
-  it('should not save without a bucket', done => {
+  it('should not save without a bucket', function(done) {
     var newStorageEvent = new StorageEvent({
       bucketEntry: mongoose.Types.ObjectId(),
       user: 'user@gmail.com',
@@ -65,7 +64,7 @@ describe('Storage/models/Storage-Event', function() {
       });
   });
 
-  it('should not save without a bucketEntry', done => {
+  it('should not save without a bucketEntry', function(done) {
     var newStorageEvent = new StorageEvent({
       bucket: mongoose.Types.ObjectId(),
       user: 'user@gmail.com',
@@ -80,7 +79,7 @@ describe('Storage/models/Storage-Event', function() {
   });
 
 
-  it('should not save without a user', done => {
+  it('should not save without a user', function(done) {
     var newStorageEvent = new StorageEvent({
       bucket: mongoose.Types.ObjectId(),
       bucketEntry: mongoose.Types.ObjectId(),

@@ -6,15 +6,15 @@ const sinon = require('sinon');
 const libPath = '../../lib/models/payment-processor-adapters/coinpayments';
 
 
-describe('Storage/models/PaymentProcessor/coinpayments', () => {
+describe('Storage/models/PaymentProcessor/coinpayments', function () {
 
-  describe('#addPaymentMethod', () => {
+  describe('#addPaymentMethod', function () {
     it('it should push data', function (done) {
       const data = {
         address: '0x703faaa2f42291e0aaa9ffdbd74ae81172895bc7'
       };
       const Adapter = proxyquire(libPath, {
-        '../../vendor/coinpayments': () => {
+        '../../vendor/coinpayments': function () {
           return {
             getCallbackAddress: sinon.stub().callsArgWith(1, null, data)
           };
@@ -43,7 +43,7 @@ describe('Storage/models/PaymentProcessor/coinpayments', () => {
         address: '0x703faaa2f42291e0aaa9ffdbd74ae81172895bc7'
       };
       const Adapter = proxyquire(libPath, {
-        '../../vendor/coinpayments': () => {
+        '../../vendor/coinpayments': function () {
           return {
             getCallbackAddress: sinon.stub().callsArgWith(1, null, data)
           };
@@ -65,13 +65,13 @@ describe('Storage/models/PaymentProcessor/coinpayments', () => {
     });
   });
 
-  describe('#removePaymentMethod', () => {
+  describe('#removePaymentMethod', function () {
     it('it should remove address', function (done) {
       const data = {
         address: '0x703faaa2f42291e0aaa9ffdbd74ae81172895bc7'
       };
       const Adapter = proxyquire(libPath, {
-        '../../vendor/coinpayments': () => {
+        '../../vendor/coinpayments': function () {
           return {
             getCallbackAddress: sinon.stub().callsArgWith(1, null, data)
           };
@@ -105,7 +105,7 @@ describe('Storage/models/PaymentProcessor/coinpayments', () => {
         address: '0x703faaa2f42291e0aaa9ffdbd74ae81172895bc7'
       };
       const Adapter = proxyquire(libPath, {
-        '../../vendor/coinpayments': () => {
+        '../../vendor/coinpayments': function () {
           return {
             getCallbackAddress: sinon.stub().callsArgWith(1, null, data)
           };

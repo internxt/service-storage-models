@@ -2,7 +2,6 @@
 
 const expect = require('chai').expect;
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
 
 const PaymentProcessorSchema = require('../lib/models/payment-processor');
 
@@ -14,10 +13,9 @@ require('mongoose-types').loadTypes(mongoose);
 before(function (done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
-    () => {
+    function () {
       PaymentProcessor = PaymentProcessorSchema(connection);
-      PaymentProcessor.deleteMany({}, done);
+      PaymentProcessor.remove({}, done);
     }
   );
 });
@@ -26,9 +24,9 @@ after(function (done) {
   connection.close(done);
 });
 
-describe('Storage/models/PaymentProcessor', () => {
+describe('Storage/models/PaymentProcessor', function () {
 
-  describe('@constructor', () => {
+  describe('@constructor', function () {
     it('should fail validation', function (done) {
       const pp = new PaymentProcessor({
         user: 'nobody@',
@@ -50,8 +48,8 @@ describe('Storage/models/PaymentProcessor', () => {
     });
   });
 
-  describe('#currentBillingPeriod', () => {
-    it('should return a billing period range', () => {
+  describe('#currentBillingPeriod', function () {
+    it('should return a billing period range', function () {
       const pp = new PaymentProcessor({
         user: 'someone@somewhere.com',
         name: 'stripe',
@@ -63,24 +61,24 @@ describe('Storage/models/PaymentProcessor', () => {
     });
   });
 
-  describe('#toObject', () => {
+  describe('#toObject', function () {
     let pp;
 
-    before(() => {
+    before(function () {
       pp = new PaymentProcessor({
         name: 'stripe',
         rawData: [{billingDate: 1}]
       });
     });
 
-    it('should NOT include deleted members', () => {
+    it('should NOT include deleted members', function () {
       const actual = pp.toObject();
       expect(actual).to.not.have.property('__v');
       expect(actual).to.not.have.property('_id');
       expect(actual).to.not.have.property('rawData');
     });
 
-    it('should include virtual members', () => {
+    it('should include virtual members', function () {
       const actual = pp.toObject();
       expect(actual).to.have.property('data');
       expect(actual).to.have.property('adapter');
@@ -88,24 +86,24 @@ describe('Storage/models/PaymentProcessor', () => {
     });
   });
 
-  describe('#toJSON', () => {
+  describe('#toJSON', function () {
     let pp;
 
-    before(() => {
+    before(function () {
       pp = new PaymentProcessor({
         name: 'stripe',
         rawData: [{billingDate: 1}]
       });
     });
 
-    it('should NOT include deleted members', () => {
+    it('should NOT include deleted members', function () {
       const actual = pp.toJSON();
       expect(actual).to.not.have.property('__v');
       expect(actual).to.not.have.property('_id');
       expect(actual).to.not.have.property('rawData');
     });
 
-    it('should include virtual members', () => {
+    it('should include virtual members', function () {
       const actual = pp.toJSON();
       expect(actual).to.have.property('data');
       expect(actual).to.have.property('adapter');

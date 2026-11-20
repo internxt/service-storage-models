@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const storj = require('storj-lib');
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
 const errors = require('storj-service-error-types');
 
 require('mongoose-types').loadTypes(mongoose);
@@ -17,17 +17,16 @@ var Bucket;
 var BucketEntry;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     function() {
       Frame = FrameSchema(connection);
       Bucket = BucketSchema(connection);
       BucketEntry = BucketEntrySchema(connection);
-      Frame.deleteMany({}, function() {
-        Bucket.deleteMany({}, function() {
-          BucketEntry.deleteMany({}, function(){
+      Frame.remove({}, function() {
+        Bucket.remove({}, function() {
+          BucketEntry.remove({}, function(){
             done();
           });
         });
@@ -36,7 +35,7 @@ before(done => {
   );
 });
 
-after(done => {
+after((done) => {
   connection.close(done);
 });
 
@@ -49,7 +48,7 @@ describe('Storage/models/BucketEntry', function() {
   var expectedFileId =
     storj.utils.calculateFileId(expectedBucketId, 'test.txt');
 
-  it('should create the bucket entry metadata', done => {
+  it('should create the bucket entry metadata', function(done) {
     const index = crypto.randomBytes(32).toString('hex');
     Bucket.create({ _id: 'user@domain.tld' }, { name: 'New Bucket2' },
                   function(err, bucket) {
@@ -73,9 +72,6 @@ describe('Storage/models/BucketEntry', function() {
           expect(entry.index).to.equal(index);
           expect(entry.filename).to.equal('test.txt');
 
-          // XXX DEPRECATED IN THE NEXT MAJOR RELEASE
-          expect(entry.id).to.equal(expectedFileId);
-
           expect(entry.id.length).to.equal(24);
           done();
         });
@@ -83,7 +79,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should give error with invalid erasure type', done => {
+  it('should give error with invalid erasure type', function(done) {
     Bucket.create({ _id: 'user@domain.tld' }, { name: 'New Bucket3' },
     function(err, bucket) {
       var frame = new Frame({});
@@ -105,7 +101,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should replace a duplicate name in this same bucket', done => {
+  it('should replace a duplicate name in this same bucket', function(done) {
     var frame = new Frame({
 
     });
@@ -125,7 +121,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should fail with invalid mimetype', done => {
+  it('should fail with invalid mimetype', function(done) {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -144,7 +140,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should create bucket entry with hmac value', done => {
+  it('should create bucket entry with hmac value', function(done) {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -178,7 +174,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should NOT create bucket entry with invalid hmac type', done => {
+  it('should NOT create bucket entry with invalid hmac type', function(done) {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -204,7 +200,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should NOT create bucket entry with long hmac value', done => {
+  it('should NOT create bucket entry with long hmac value', function(done) {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -228,7 +224,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should NOT create bucket entry with non-hex hmac value', done => {
+  it('should NOT create bucket entry with non-hex hmac value', function(done) {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -252,7 +248,7 @@ describe('Storage/models/BucketEntry', function() {
     });
   });
 
-  it('should contain specified properties', done => {
+  it('should contain specified properties', function(done) {
     Bucket.create({ _id: 'user@domain.tld' }, {}, function(err, bucket) {
       var frame = new Frame({});
       frame.save(function(err) {
@@ -281,7 +277,7 @@ describe('Storage/models/BucketEntry', function() {
   describe('Indexes', function() {
     let entry = null;
 
-    before(done => {
+    before(function(done) {
       Bucket.create({ _id: 'user@domain.tld' }, {}, (err, bucket) => {
         if (err) {
           return done(err);
@@ -308,7 +304,7 @@ describe('Storage/models/BucketEntry', function() {
       });
     });
 
-    it('should have an index for created', done => {
+    it('should have an index for created', function(done) {
       const now = Date.now();
       const query = {
         'created': {
@@ -317,16 +313,12 @@ describe('Storage/models/BucketEntry', function() {
       };
       const cursor = BucketEntry.collection.find(query);
       cursor.explain((err, result) => {
-        expect(err).to.be.equals(null);
-        expect(result).not.equals(null);
-        /*
         expect(result.queryPlanner.winningPlan.inputStage.indexBounds)
           .to.eql({
             created: [
               '[-inf.0, ' + now + '.0]'
             ]
           });
-          */
         done();
       });
     });

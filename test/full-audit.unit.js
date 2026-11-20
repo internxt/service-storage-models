@@ -1,20 +1,18 @@
 'use strict';
 
 const expect = require('chai').expect;
-const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
+const Mongoose = require('mongoose');
 const FullAudit = require('../lib/models/full-audit');
 
 var auditModel;
 var connection;
 
 before((done) => {
-  connection = mongoose.createConnection(
+  connection = Mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     () => {
       auditModel = FullAudit(connection);
-      auditModel.deleteMany({}, () => {
+      auditModel.remove({}, () => {
         done();
       });
     }
@@ -54,14 +52,12 @@ describe('FullAudit', function() {
 
     it('should not schedule audits with missing properties', (done) => {
       auditModel.scheduleFullAudits({challenges:[{}]},
-        null)
-        .then(() => {
-          expect.fail('scheduleFullAudits accepted an empty object');
+        null, (err, docsArr) => {
+          expect(err).to.not.be.a('null');
+          expect(docsArr).to.be.an('undefined');
           done();
         }
-      ).catch(() => {
-        done();
-      });
+      );
     });
 
     it('should accept an optional scheduling transform function', (done) => {

@@ -4,7 +4,7 @@
 
 const async = require('async');
 const expect = require('chai').expect;
-const mongoose = require('mongoose'); mongoose.Promise = global.Promise;
+const mongoose = require('mongoose');
 const crypto = require('crypto');
 const errors = require('storj-service-error-types');
 
@@ -19,17 +19,16 @@ var User;
 var Pointer;
 var connection;
 
-before(done => {
+before(function(done) {
   connection = mongoose.createConnection(
     'mongodb://127.0.0.1:27017/__storj-bridge-test',
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
     function() {
       Frame = FrameSchema(connection);
       User = UserSchema(connection);
-      Frame.deleteMany({}, function() {
-        User.deleteMany({}, function() {
+      Frame.remove({}, function() {
+        User.remove({}, function() {
           Pointer = PointerSchema(connection);
-          Pointer.deleteMany({}, function() {
+          Pointer.remove({}, function() {
             done();
           });
         });
@@ -38,7 +37,7 @@ before(done => {
   );
 });
 
-after(done => {
+after(function(done) {
   connection.close(done);
 });
 
@@ -49,7 +48,7 @@ function sha256(i) {
 describe('Storage/models/Frame', function() {
 
   describe('@constructor', function() {
-    it('should fail validation', done => {
+    it('should fail validation', function(done) {
       const frame = new Frame({
         user: 'nobody@'
       });
@@ -59,7 +58,7 @@ describe('Storage/models/Frame', function() {
         done();
       });
     });
-    it('should NOT fail validation', done => {
+    it('should NOT fail validation', function(done) {
       const frame = new Frame({
         user: 'somebody@somewhere.com',
       });
@@ -69,7 +68,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#create', function() {
 
-    it('should create a frame with default props', done => {
+    it('should create a frame with default props', function(done) {
       User.create('user@domain.tld', sha256('password'), function(err, user) {
         Frame.create(user, function(err, frame) {
           expect(err).to.not.be.an.instanceOf(Error);
@@ -80,7 +79,7 @@ describe('Storage/models/Frame', function() {
           expect(frame.shards).to.be.an('array');
 
           // cleanup
-          User.findOneAndDelete({ _id: user._id }, function(err) {
+          User.findOneAndRemove({ _id: user._id }, function(err) {
             expect(err).to.not.be.an.instanceOf(Error);
             done();
           });
@@ -92,7 +91,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#lock', function() {
 
-    it('should set frame.lock to true', done => {
+    it('should set frame.lock to true', function(done) {
       Frame.create({}, function(err, frame) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(frame.locked).to.be.false;
@@ -427,7 +426,7 @@ describe('Storage/models/Frame', function() {
   });
 
   describe('#addShard', function() {
-    it('will increment sizes with concurrency', done => {
+    it('will increment sizes with concurrency', function(done) {
       const replacementHash = crypto.randomBytes(20).toString('hex');
       let hashes = [];
       var frame = null;
@@ -515,7 +514,7 @@ describe('Storage/models/Frame', function() {
       });
     });
 
-    it('will fail if there are multiple shards under the min', done => {
+    it('will fail if there are multiple shards under the min', function(done) {
       const replacementHash = crypto.randomBytes(20).toString('hex');
       let hashes = [];
       var frame = null;
@@ -591,7 +590,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#unlock', function() {
 
-    it('should set frame.lock to false', done => {
+    it('should set frame.lock to false', function(done) {
       Frame.create({}, function(err, frame) {
         expect(err).to.not.be.an.instanceOf(Error);
         expect(frame.locked).to.be.false;
@@ -611,7 +610,7 @@ describe('Storage/models/Frame', function() {
 
   describe('#toObject', function() {
 
-    it('should contain specified properties', done => {
+    it('should contain specified properties', function(done) {
       Frame.create({}, function(err, frame) {
         expect(err).to.not.be.an.instanceOf(Error);
         const keys = Object.keys(frame.toObject());

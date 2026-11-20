@@ -7,7 +7,7 @@ var addCreatedFromContractStart = function() {
     var id = doc._id;
     var created = doc.contract.store_begin;
     print("updating id: " + id + " with created: " + created);
-    var result = db.mirrors.updateOne({
+    var result = db.mirrors.update({
       _id: id
     }, {
       $set: {
