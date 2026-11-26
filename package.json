@@ -49,7 +49,7 @@
     "random-word": "^2.0.0",
     "storj-service-error-types": "github:internxt/service-error-types",
     "stripe": "^8.142.0",
-    "uuid": "^8.3.2"
+    "uuid": "^14.0.3"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.4",
@@ -60,7 +60,7 @@
     "lodash": "^4.17.4",
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0",
-    "nyc": "^15.1.0",
+    "nyc": "^18.0.0",
     "sinon": "^1.17.6"
   }
 }
